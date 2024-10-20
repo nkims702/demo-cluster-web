@@ -1,0 +1,151 @@
+
+
+java -jar -Dserver.port=8080 ROOT.war 
+세션 동기화 됨. 
+ - DemoClusterWebApplication 
+   >> distributable 적용 해야 함. 
+ - TomcatClusterConfig  
+   >> @Configuration 등록
+ - pom.xml 아래 dependency 없어도 됨.
+ 	spring-boot-starter-tomcat
+ 	
+스프링 부트 war파일을 외장(?)톰캣으로 배포 후 세션 공유 처리. 
+	case1) 외장 톰캣의 server.xml 에 Cluster 적용 후 테스트 진행.
+		>> 외장 톰캣의 Cluster이 적용이 되는듯 하며. 스프링부트에서는 작동 안됨.
+		>>  distributable, TomcatClusterConfig 미 작동.
+
+		
+		
+		
+참고 사이트 
+https://medium.com/@SlackBeck/spring-boot-%EC%9B%B9-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98%EC%9D%84-war%EB%A1%9C-%EB%B0%B0%ED%8F%AC%ED%95%A0-%EB%95%8C-%EC%99%9C-springbootservletinitializer%EB%A5%BC-%EC%83%81%EC%86%8D%ED%95%B4%EC%95%BC-%ED%95%98%EB%8A%94%EA%B1%B8%EA%B9%8C-a07b6fdfbbde	
+
+https://oingdaddy.tistory.com/346
+https://letsplaycoding.tistory.com/95
+
+
+넥사크로 
+
+https://www.playnexacro.com/#show:learn:1609
+	
+	
+	https://www.playnexacro.com/#show:learn:1609
+	
+	
+	https://bbbicb.tistory.com/58
+-------------------------------------------------------------
+
+
+
+2024-10-20 01:55:36.553 ERROR 36936 --- [nio-8080-exec-1] .a.c.c.C.[.[.[.[gridExportImportServlet] : Servlet.service() for servlet [gridExportImportServlet] in context with path [] threw exception [Servlet execution threw an exception] with root cause
+
+java.lang.ClassNotFoundException: org.apache.poi.ss.usermodel.Workbook
+        at java.net.URLClassLoader$1.run(Unknown Source) ~[na:1.8.0_25]
+        at java.net.URLClassLoader$1.run(Unknown Source) ~[na:1.8.0_25]
+        at java.security.AccessController.doPrivileged(Native Method) ~[na:1.8.0_25]
+        at java.net.URLClassLoader.findClass(Unknown Source) ~[na:1.8.0_25]
+        at java.lang.ClassLoader.loadClass(Unknown Source) ~[na:1.8.0_25]
+        at org.springframework.boot.loader.LaunchedURLClassLoader.loadClass(LaunchedURLClassLoader.java:151) ~[ROOT.war:0.0.1-SNAPSHOT]
+        at java.lang.ClassLoader.loadClass(Unknown Source) ~[na:1.8.0_25]
+        at com.nexacro.java.xeni.export.GridExportTypeFactory.getGridExporter(Unknown Source) ~[nexacro-xeni-java-1.4.13.jar!/:na]
+        at com.nexacro.java.xeni.services.GridExportImportAgent.gridExport(Unknown Source) ~[nexacro-xeni-java-1.4.13.jar!/:na]
+        at com.nexacro.java.xeni.services.GridExportImportServlet.processRequest(Unknown Source) ~[nexacro-xeni-java-1.4.13.jar!/:na]
+        at com.nexacro.java.xeni.services.GridExportImportServlet.doPost(Unknown Source) ~[nexacro-xeni-java-1.4.13.jar!/:na]
+        at javax.servlet.http.HttpServlet.service(HttpServlet.java:652) ~[tomcat-embed-core-9.0.44.jar!/:4.0.FR]
+        at javax.servlet.http.HttpServlet.service(HttpServlet.java:733) ~[tomcat-embed-core-9.0.44.jar!/:4.0.FR]
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:227) ~[tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) ~[tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53) ~[tomcat-embed-websocket-9.0.44.jar!/:9.0.44]
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) ~[tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) ~[tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.springframework.web.multipart.support.MultipartFilter.doFilterInternal(MultipartFilter.java:125) ~[spring-web-5.3.5.jar!/:5.3.5]
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) ~[spring-web-5.3.5.jar!/:5.3.5]
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) ~[tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) ~[tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-5.3.5.jar!/:5.3.5]
+        at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:119) ~[spring-web-5.3.5.jar!/:5.3.5]
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189) ~[tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162) ~[tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197) ~[tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:97) [tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:541) [tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:135) [tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:92) [tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:78) [tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.ha.session.JvmRouteBinderValve.invoke(JvmRouteBinderValve.java:182) [tomcat-catalina-ha-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.ha.tcp.ReplicationValve.invoke(ReplicationValve.java:329) [tomcat-catalina-ha-9.0.62.jar!/:9.0.62]
+        at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:360) [tomcat-catalina-9.0.62.jar!/:9.0.62]
+        at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) [tomcat-coyote-9.0.62.jar!/:9.0.62]
+        at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:65) [tomcat-coyote-9.0.62.jar!/:9.0.62]
+        at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:890) [tomcat-coyote-9.0.62.jar!/:9.0.62]
+        at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1743) [tomcat-coyote-9.0.62.jar!/:9.0.62]
+        at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49) [tomcat-coyote-9.0.62.jar!/:9.0.62]
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source) [na:1.8.0_25]
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source) [na:1.8.0_25]
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) [tomcat-embed-core-9.0.44.jar!/:9.0.44]
+        at java.lang.Thread.run(Unknown Source) [na:1.8.0_25]
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Exception in thread "Tribes-Task-Receiver[Tomcat-Channel]-11" java.lang.NoClassDefFoundError: org/apache/catalina/session/Constants
+        at org.apache.catalina.session.StandardSession.exclude(StandardSession.java:1771)
+        at org.apache.catalina.ha.session.DeltaSession.doWriteObject(DeltaSession.java:966)
+        at org.apache.catalina.ha.session.DeltaSession.writeObjectData(DeltaSession.java:660)
+        at org.apache.catalina.ha.session.DeltaSession.writeObjectData(DeltaSession.java:657)
+        at org.apache.catalina.ha.session.DeltaManager.serializeSessions(DeltaManager.java:739)
+        at org.apache.catalina.ha.session.DeltaManager.sendSessions(DeltaManager.java:1491)
+        at org.apache.catalina.ha.session.DeltaManager.handleGET_ALL_SESSIONS(DeltaManager.java:1418)
+        at org.apache.catalina.ha.session.DeltaManager.messageReceived(DeltaManager.java:1233)
+        at org.apache.catalina.ha.session.DeltaManager.messageDataReceived(DeltaManager.java:997)
+        at org.apache.catalina.ha.session.ClusterSessionListener.messageReceived(ClusterSessionListener.java:77)
+        at org.apache.catalina.ha.tcp.SimpleTcpCluster.messageReceived(SimpleTcpCluster.java:821)
+        at org.apache.catalina.ha.tcp.SimpleTcpCluster.messageReceived(SimpleTcpCluster.java:803)
+        at org.apache.catalina.tribes.group.GroupChannel.messageReceived(GroupChannel.java:345)
+        at org.apache.catalina.tribes.group.ChannelInterceptorBase.messageReceived(ChannelInterceptorBase.java:96)
+        at org.apache.catalina.tribes.group.interceptors.TcpPingInterceptor.messageReceived(TcpPingInterceptor.java:183)
+        at org.apache.catalina.tribes.group.ChannelInterceptorBase.messageReceived(ChannelInterceptorBase.java:96)
+        at org.apache.catalina.tribes.group.interceptors.TcpFailureDetector.messageReceived(TcpFailureDetector.java:118)
+        at org.apache.catalina.tribes.group.ChannelInterceptorBase.messageReceived(ChannelInterceptorBase.java:96)
+        at org.apache.catalina.tribes.group.ChannelInterceptorBase.messageReceived(ChannelInterceptorBase.java:96)
+        at org.apache.catalina.tribes.group.ChannelCoordinator.messageReceived(ChannelCoordinator.java:288)
+        at org.apache.catalina.tribes.transport.ReceiverBase.messageDataReceived(ReceiverBase.java:272)
+        at org.apache.catalina.tribes.transport.nio.NioReplicationTask.drainChannel(NioReplicationTask.java:229)
+        at org.apache.catalina.tribes.transport.nio.NioReplicationTask.run(NioReplicationTask.java:103)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+        at java.lang.Thread.run(Unknown Source)
+2024-10-20 02:03:22.459  INFO 18192 --- [extShutdownHook] o.s.c.support.DefaultLifecycleProcessor  : Failed to shut down 1 bean with phase value 2147483647 within timeout of 30000ms: [webServerGracefulShutdown]
+
+---------------------------------------------------------------------------------------------------------------
+
+https://itwarehouses.tistory.com/13
+
+
+https://stackoverflow.com/questions/27669415/exception-in-recieving-java-net-socketexception-no-such-device-in-android-mul
+
+route add -net 224.0.0.0 netmask 240.0.0.0 dev enp0s3
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+[36m
+com.nexacro.java.xapi.license.A.ECould not find license 
+	file in JAR dir: path=D:\workspace-spring-tool-suite-4-4.5.1\demo-cluster-web\src\main\webapp\WEB-INF\lib\NexacroN_server_license.xml
+com.nexacro.java.xapi.license.A.E       [0;39m [2m:[0;39m 
+	Loaded license file in CLASSPATH: class path=file:/D:/workspace-spring-tool-suite-4-4.5.1/demo-cluster-web/src/main/webapp/WEB-INF/lib/nexacro-xapi-java-1.0.12.jar;file:/D:/workspace-spring-tool-suite-4-4.5.1/demo-cluster-web/src/main/webapp/WEB-INF/lib/nexacro-xeni-java-1.4.13.jar;file:/D:/workspace-spring-tool-suite-4-4.5.1/demo-cluster-web/src/main/webapp/WEB-INF/lib/uiadapter-spring-core-1.0.0-SNAPSHOT.jar;file:/D:/workspace-spring-tool-suite-4-4.5.1/demo-cluster-web/src/main/webapp/WEB-INF/lib/uiadapter-spring-dataaccess-1.0.0-SNAPSHOT.jar;file:/D:/workspace-spring-tool-suite-4-4.5.1/demo-cluster-web/src/main/webapp/WEB-INF/lib/uiadapter-spring-excel-1.0.0-SNAPSHOT.jar
+com.nexacro.java.xapi.license.A.E       [0;39m [2m:[0;39m 
+	Loaded license file in CLASSPATH: url=file:/D:/workspace-spring-tool-suite-4-4.5.1/demo-cluster-web/target/classes/NexacroN_server_license.xml
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+ClusterSession 
+https://eng-nate.tistory.com/13
+
+https://blog.naver.com/jooda99/221492627548
+https://lilo.tistory.com/110
+
+
+
+
+	
