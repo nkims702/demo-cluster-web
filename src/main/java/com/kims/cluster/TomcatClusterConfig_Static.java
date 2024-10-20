@@ -22,29 +22,25 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Configuration;
 
-/* 
- * 
- * 
+/*
+
+출처: https://happy-jjang-a.tistory.com/155 [jjang-a 블로그:티스토리]
 
 */
 //public class TomcatClusterConfig{}
 
-@Configuration
-public class TomcatClusterConfig implements WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
+//@Configuration
+public class TomcatClusterConfig_Static implements WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
     @Override
     public void customize(final TomcatServletWebServerFactory factory) {
-        factory.addContextCustomizers(new TomcatClusterContextCustomizer());
+        factory.addContextCustomizers(new TomcatClusterContextCustomizer_Static());
     }
 
 
 }
 
-/*
- * 
- * 한 장비 안에서는 가능.
- * 로컬 vm 환경이라서 두개 vm간 connect refused 발생. 
- * */
-class TomcatClusterContextCustomizer implements TomcatContextCustomizer {
+/* static 방식 */
+class TomcatClusterContextCustomizer_Static implements TomcatContextCustomizer {
 	
 	private int localClusterMemberPort = 4010;
 	private String clusterMembers = "192.168.56.101:4010,192.168.56.102:4010,192.168.56.101:4020,192.168.56.102:4020";
@@ -66,13 +62,75 @@ class TomcatClusterContextCustomizer implements TomcatContextCustomizer {
         configureCluster((Engine) context.getParent().getParent());
     }
     
-     
+    private void configureCluster(Engine engine) {
+        //cluster 
+        SimpleTcpCluster cluster = new SimpleTcpCluster();
+        cluster.setChannelStartOptions(3);
+        cluster.setChannelSendOptions(8);
+
+        //channel 
+        GroupChannel channel = new GroupChannel();
+
+        StaticMembershipInterceptor staticMembershipInterceptor = new StaticMembershipInterceptor();
+
+        /** [WAS1] 설정 기준    */
+        // 대상 정보 - was2정보
+        StaticMember staticMember = new StaticMember();
+        staticMember.setPort(4056);
+        staticMember.setSecurePort(-1); // default
+        staticMember.setHost("192.168.56.102");
+        staticMember.setUniqueId("{0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2}");
+        staticMembershipInterceptor.addStaticMember(staticMember);
+
+        //receiver(현재 자신의 정보) - was1
+        NioReceiver receiver = new NioReceiver();
+        receiver.setAddress("192.168.56.101");
+        receiver.setMaxThreads(6);
+        receiver.setPort(4055);  // was1: 4055, was2: 4056
+        channel.setChannelReceiver(receiver);
+       
+
+        /** [WAS2] 설정 기준    
+        // 대상 정보 - was1정보
+        StaticMember staticMember = new StaticMember();
+        staticMember.setPort(4055);
+        staticMember.setSecurePort(-1); // default
+        //staticMember.setHost("172.31.44.193");
+        staticMember.setHost("192.168.56.101");
+        staticMember.setUniqueId("{0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1}");
+        staticMembershipInterceptor.addStaticMember(staticMember);
+
+         //receiver(현재 자신의 정보) - was2
+         NioReceiver receiver = new NioReceiver();
+         receiver.setAddress("192.168.56.102");
+         receiver.setMaxThreads(6);
+         receiver.setPort(4056);  // was1: 4055, was2: 4056
+         channel.setChannelReceiver(receiver);
+         */
+
+        channel.addInterceptor(staticMembershipInterceptor);
+
+        //sender
+        ReplicationTransmitter sender = new ReplicationTransmitter();
+        sender.setTransport(new PooledParallelSender());
+        channel.setChannelSender(sender);
+
+        //interceptor
+        channel.addInterceptor(new TcpPingInterceptor());
+        channel.addInterceptor(new TcpFailureDetector());
+        channel.addInterceptor(new MessageDispatchInterceptor());
+        cluster.addValve(new ReplicationValve());
+        cluster.addValve(new JvmRouteBinderValve());
+        cluster.setChannel(channel);
+        cluster.addClusterListener(new ClusterSessionListener());
+        engine.setCluster(cluster);
+    } 
     
     
     /*
      * 
      * Multicast 방식
-     *  */
+     * 
     private void configureCluster(Engine engine) {
     	System.out.println("TomcatClusterContextCustomizer configureCluster ###"); 
     	
@@ -117,5 +175,5 @@ class TomcatClusterContextCustomizer implements TomcatContextCustomizer {
         engine.setCluster(cluster);
     }
     
-   
+    */
 } 
